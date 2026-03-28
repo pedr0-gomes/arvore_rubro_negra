@@ -21,11 +21,69 @@ static int total_casos = 0;
 static int casos_ok = 0;
 
 /* TODO: implemente sua insercao aqui (branch de insercao) */
+int insercao_ArvRB(ArvRB *raiz,int valor)
+{
+    if (raiz == NULL)    return 0;
+
+    // criar nó aux vermelho
+    ArvRB aux = malloc(sizeof(struct NO));
+    if (aux == NULL) return 0;
+    aux->val = valor;
+    aux->cor = RED;
+    aux->esq = NIL;
+    aux->dir = NIL;
+    aux->pai = NIL;
+    
+    // árvore vazia
+    if (*raiz == NIL)
+    {
+        *raiz = aux;
+        (*raiz)->pai = NIL;
+        (*raiz)->cor = BLACK;
+        return 1;
+    }
+
+    // descida na arvore
+    ArvRB q1 = *raiz;
+    ArvRB q2 = NULL;
+    while (q1 != NIL)
+    {
+        q2 = q1;
+        if (valor < q1->val)        q1 = q1->esq;
+        else if (valor > q1->val)   q1 = q1->dir;
+        else
+        {
+            free(aux);
+            return 0;
+        }    
+    }
+    if (valor < q2->val)    q2->esq = aux;
+    else                    q2->dir = aux;
+    aux->pai = q2;
+
+    //subida e rotacoes
+    while (1)
+    {
+        if (q2->esq != NIL && q2->esq->cor == RED)   q2 = rotacao_dir(raiz, q2);
+        if (q2->dir != NIL && q2->dir->cor == RED && q2->dir->dir->cor == RED)
+        {
+            q2 = rotacao_esq(raiz, q2);
+        }
+        if (q2->pai == NIL)
+        {
+            if (*raiz != NIL)
+            {
+                (*raiz)->cor = BLACK;
+                (*raiz)->pai = NIL;
+            }
+            return 1;
+        }
+        q2 = q2->pai;
+    }
+}
 static int inserir_main_branch(ArvRB *raiz, int valor)
 {
-    (void)raiz;
-    (void)valor;
-    return 0;
+    return insercao_ArvRB(raiz, valor);
 }
 
 static int idx_valor(int valor)
