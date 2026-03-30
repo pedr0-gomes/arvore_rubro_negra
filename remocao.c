@@ -79,18 +79,169 @@ int insercao_ArvRB(ArvRB *raiz,int valor)
             }
             return 1;
         }
-        q2 =oid)raiz;
-    (void)valor;
-    return 0;
+        q2 = q2->pai;
+    }
+}
+static int inserir_main_branch(ArvRB *raiz, int valor)
+{
+    return insercao_ArvRB(raiz, valor);
+}
+
+static ArvRB busca_no(ArvRB *raiz, int valor)
+{
+    if (raiz == NULL) return NIL;
+    ArvRB p = *raiz;
+    while (p != NIL)
+    {
+        if (p->val == valor) return p;
+        else if (p->val > valor) p = p->esq;
+        else                     p = p->dir;
+    }
+    return NIL;
 }
 
 /* TODO: implemente aqui sua remocao */
+int remover_ArvRB(ArvRB *raiz,int valor)
+{
+    // buscar nó
+    ArvRB z = busca_no(raiz, valor);
+    if (z == NIL) return 0;
 
+    // costurar nó (remocao fisica)
+    ArvRB y;
+    if (z->esq == NIL || z->dir == NIL)
+    {
+        // caso 1: z possui no maximo um filho, entao ele proprio sai da arvore
+        y = z;
+    }
+    else
+    {
+        // caso 2: dois filhos
+        y = z->dir;
+        while (y->esq != NIL)
+        {
+            y = y->esq;
+        }
+    }
+    ArvRB x;
+    if (y->esq != NIL)  x = y->esq;
+    else                x = y->dir;
+    x->pai = y->pai;
+    if (y->pai == NIL)          *raiz = x;
+    else if (y == y->pai->esq)  y->pai->esq = x;
+    else                        y->pai->dir = x;  
+    int cor_removida = y->cor; 
+    if (y != z)
+    {
+        y->pai = z->pai;
+        if (z->pai == NIL)          *raiz = y;
+        else if (z == z->pai->esq)  z->pai->esq = y;
+        else                        z->pai->dir = y;
+        y->esq = z->esq;
+        if (y->esq != NIL) y->esq->pai = y;
+        y->dir = z->dir;
+        if (y->dir != NIL) y->dir->pai = y;
+        y->cor = z->cor;
+        if (x->pai == z) x->pai = y;
+    }
+
+    // rebalanceamento
+    if (cor_removida == BLACK)
+    {
+        while (x != *raiz && x->cor == BLACK)
+        {
+            if (x == x->pai->esq)
+            {
+                ArvRB w = x->pai->dir;
+                if (w->cor == RED)
+                {
+                    w->cor = BLACK;
+                    x->pai->cor = RED;
+                    rotacao_esq(raiz, x->pai);
+                    w = x->pai->dir;
+                }
+                if (w->esq->cor == BLACK && w->dir->cor == BLACK)
+                {
+                    w->cor = RED;
+                    x = x->pai;
+                }
+                else
+                {
+                    if (w->dir->cor == BLACK)
+                    {
+                        w->esq->cor = BLACK;
+                        w->cor = RED;
+                        rotacao_dir(raiz, w);
+                        w = x->pai->dir;
+                    }
+                    w->cor = x->pai->cor;
+                    x->pai->cor = BLACK;
+                    w->dir->cor = BLACK;
+                    rotacao_esq(raiz, x->pai);
+                    x = *raiz;
+                }
+            }
+            else
+            {
+                ArvRB w = x->pai->esq;
+                if (w->cor == RED)
+                {
+                    w->cor = BLACK;
+                    x->pai->cor = RED;
+                    rotacao_dir(raiz, x->pai);
+                    w = x->pai->esq;
+                }
+                if (w->dir->cor == BLACK && w->esq->cor == BLACK)
+                {
+                    w->cor = RED;
+                    x = x->pai;
+                }
+                else
+                {
+                    if (w->esq->cor == BLACK)
+                    {
+                        w->dir->cor = BLACK;
+                        w->cor = RED;
+                        rotacao_esq(raiz, w);
+                        w = x->pai->esq;
+                    }
+                    w->cor = x->pai->cor;
+                    x->pai->cor = BLACK;
+                    w->esq->cor = BLACK;
+                    rotacao_dir(raiz, x->pai);
+                    x = *raiz;
+                }
+            }
+        }
+        x->cor = BLACK;
+    }
+
+    // ajuste estrutural para garantir as definições da arvore rn do material
+    ArvRB n = x->pai;
+    while (n != NIL)
+    {
+    if (n->esq != NIL && n->esq->cor == RED) n = rotacao_dir(raiz, n);
+    if (n->dir != NIL && n->dir->cor == RED && n->dir->dir->cor == RED) n = rotacao_esq(raiz, n);
+    n = n->pai;
+    }
+
+    // raiz sempre preta
+    if (*raiz != NIL)
+    {
+        (*raiz)->cor = BLACK;
+        (*raiz)->pai = NIL;
+    }
+    NIL->cor = BLACK;
+    NIL->esq = NIL;
+    NIL->dir = NIL;
+    NIL->pai = NIL;
+
+    free(z);
+    return 1;
+}
 static int remover_main_branch(ArvRB *raiz, int valor)
 {
-    (void)raiz;
-    (void)valor;
-    return 0;
+    return remover_ArvRB(raiz, valor);
 }
 
 static int idx_valor(int valor)
