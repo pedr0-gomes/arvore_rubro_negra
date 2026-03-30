@@ -1,6 +1,3 @@
-Cole isso no `.gitignore`:
-
-```
 # Prerequisites
 *.d
 
@@ -56,6 +53,3 @@ dkms.conf
 
 # debug information files
 *.dwo
-```
-
-Depois do commit me avise.
