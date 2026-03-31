@@ -1,4 +1,5 @@
 # arvore-rubro-negra
+![Build](https://github.com/pedr0-gomes/arvore_rubro_negra/actions/workflows/build.yml/badge.svg)
 
 > Implementação de inserção e remoção em Árvore Rubro-Negra Direitista em C, com abordagem iterativa e ponteiro pai.
 
@@ -41,6 +42,11 @@ O TAD (`rbt.h` / `rbt.c`) define a estrutura do nó com os campos `val`, `esq`, 
 A inserção segue as 4 regras da nota de aula: o novo nó entra vermelho, a subida aplica rotação à direita para corrigir filho esquerdo vermelho, rotação à esquerda para desfazer a estrutura P-V-V, e a raiz é sempre pintada de preto ao final.
 
 A remoção localiza o nó, faz a remoção física com substituição pelo sucessor em ordem quando necessário, e executa o rebalanceamento pela subida com os casos simétricos de déficit de preto.
+
+| Operação | Complexidade |
+|----------|-------------|
+| Inserção | O(log n)    |
+| Remoção  | O(log n)    |
 
 ## Aprendizados
 
