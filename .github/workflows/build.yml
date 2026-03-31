@@ -1,0 +1,21 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar GCC
+        run: sudo apt-get install -y gcc
+
+      - name: Build e execução
+        run: |
+          gcc -Wall -Wextra insercao.c rbt.c -o test_insercao && ./test_insercao
+          gcc -Wall -Wextra remocao.c rbt.c -o test_remocao && ./test_remocao
